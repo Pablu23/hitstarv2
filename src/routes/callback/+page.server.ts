@@ -17,11 +17,17 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
 
     const s = await db.select().from(states).where(eq(states.id, state)).limit(1);
 
+    if (s.length <= 0 || !s[0].codeVerifier) {
+        redirect(307, "/error")
+    }
     const token = await getToken(code, s[0].codeVerifier)
 
     // TODO: Check if deletion was fulfilled
     await db.delete(states).where(eq(states.id, state));
 
+    console.log(`Received request and exchanged code for token: ${token}`)
+
+    console.log("Trying to get current User Profile")
     const userResponse = await getCurrentUserProfile(token.access_token)
 
     const isUser: boolean = (await db.$count(usersTable, eq(usersTable.email, userResponse.email))) === 1
