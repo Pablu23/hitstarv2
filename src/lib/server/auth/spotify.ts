@@ -1,4 +1,4 @@
-import { PUBLIC_CLIENT_ID, PUBLIC_REDIRECT_URI } from "$env/static/public";
+import { env } from "$env/dynamic/public";
 
 export const generateRandomString = (length: number) => {
   const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -27,10 +27,10 @@ export const getToken = async (code: string, codeVerifier: string) => {
       'Content-Type': 'application/x-www-form-urlencoded'
     },
     body: new URLSearchParams({
-      client_id: PUBLIC_CLIENT_ID,
+      client_id: env.PUBLIC_CLIENT_ID,
       grant_type: 'authorization_code',
       code,
-      redirect_uri: PUBLIC_REDIRECT_URI,
+      redirect_uri: env.PUBLIC_REDIRECT_URI,
       code_verifier: codeVerifier
     })
   };

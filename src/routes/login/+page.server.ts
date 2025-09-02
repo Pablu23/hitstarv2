@@ -1,4 +1,4 @@
-import { PUBLIC_CLIENT_ID, PUBLIC_REDIRECT_URI } from "$env/static/public";
+import { env } from "$env/dynamic/public";
 import { redirect } from "@sveltejs/kit";
 import { generateRandomString, sha256, base64encode } from '$lib/server/auth/spotify';
 import type { PageServerLoad } from "../$types";
@@ -24,11 +24,11 @@ export const load: PageServerLoad = async () => {
 
     const params = {
         response_type: 'code',
-        client_id: PUBLIC_CLIENT_ID,
+        client_id: env.PUBLIC_CLIENT_ID,
         scope,
         code_challenge_method: 'S256',
         code_challenge: codeChallenge,
-        redirect_uri: PUBLIC_REDIRECT_URI,
+        redirect_uri: env.PUBLIC_REDIRECT_URI,
         state
     }
 
