@@ -1,7 +1,6 @@
 import { db } from "$lib/server/db";
 import { usersTable } from "$lib/server/db/schema";
 import { json } from "@sveltejs/kit";
-import type { Actions } from "../../$types";
 
 export async function POST({ request }) {
     const user = await request.json();
