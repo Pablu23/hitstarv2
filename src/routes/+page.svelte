@@ -2,10 +2,7 @@
 	import { goto } from '$app/navigation';
 	import type { PageProps } from './$types';
 
-	let { data }: PageProps = $props();
-
-	let users = $state(data.users);
-	let user = $state(data.user);
+	let { data, form }: PageProps = $props();
 </script>
 
 <h1>Welcome to SvelteKit</h1>
@@ -16,20 +13,21 @@
 	<label>Username: <input type="text" bind:value={username} /></label>
 </div> -->
 
-{#if !user.isLoggedIn}
+{#if form?.success}
+	<p>Successfully logged out</p>
+{/if}
+
+{#if !data.user.isLoggedIn}
 	<button onclick={async () => await goto('/login')}> Login </button>
 {:else}
-	<h2>Hello {user.username}</h2>
-	<button
-		onclick={async () => {
-			user.username = "";
-			user.email = "";
-			user.isLoggedIn = false;
-			await goto('/logout');
-		}}
-	>
-		Logout
-	</button>
+	<h2>Hello {data.user.username}</h2>
+	<form method="POST" action="?/logout">
+		<button type="submit">Logout</button>
+	</form>
+
+	<form method="POST" action="?/deleteUsers">
+		<button type="submit">Delete all Users</button>
+	</form>
 {/if}
 <!-- 
 <button
@@ -56,18 +54,8 @@
 	}}>Create User</button
 > -->
 
-<button
-	onclick={async () => {
-		const response = await fetch('/api/deleteUsers', {
-			method: 'POST'
-		});
-
-		users.splice(0, users.length);
-	}}>Delete all Users</button
->
-
 <ul>
-	{#each users as user (user.email)}
+	{#each data.users as user (user.email)}
 		<li>
 			{user.username} = {user.email}
 		</li>

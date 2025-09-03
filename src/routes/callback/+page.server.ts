@@ -25,9 +25,6 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
     // TODO: Check if deletion was fulfilled
     await db.delete(states).where(eq(states.id, state));
 
-    console.log(`Received request and exchanged code for token: ${token}`)
-
-    console.log("Trying to get current User Profile")
     const userResponse = await getCurrentUserProfile(token.access_token)
 
     const isUser: boolean = (await db.$count(usersTable, eq(usersTable.email, userResponse.email))) === 1

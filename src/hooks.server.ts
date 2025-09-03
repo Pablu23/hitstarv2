@@ -1,7 +1,7 @@
 import { db } from '$lib/server/db';
 import { sessionsTable, usersTable } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
-import type { Handle } from '@sveltejs/kit';
+import { redirect, type Handle } from '@sveltejs/kit';
 
 export const handle: Handle = async ({ event, resolve }) => {
     const sessionId = event.cookies.get('session_id');
@@ -27,6 +27,12 @@ export const handle: Handle = async ({ event, resolve }) => {
             };
         }
     } 
+
+    if (event.url.pathname.startsWith("/private") && !user.isLoggedIn) {
+        redirect(307, "/error");
+    } else if (event.url.pathname.startsWith("/api") && !user.isLoggedIn) {
+        return new Response(null, { status: 401 });
+    }
 
     event.locals.user = user;
     const response = await resolve(event);

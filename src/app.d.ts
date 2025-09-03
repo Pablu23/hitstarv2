@@ -8,8 +8,8 @@ declare global {
 		interface Locals {
 			user: {
 				isLoggedIn: boolean;
-				email: string | undefined;
-				username: string | undefined | null;
+				email: string | null;
+				username: string | null;
 			}
 		}
 		// interface PageData {}
