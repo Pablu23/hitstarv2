@@ -90,10 +90,11 @@
       <div class="mt-3 flex items-center justify-center">
         <span class="text-gray-600 mr-2">Invite your friends using code:</span>
         <span class="font-mono bg-white px-3 py-1.5 rounded-md border border-gray-200 text-blue-600 font-semibold">{lobbyCode}</span>
+        <!-- svelte-ignore a11y_consider_explicit_label -->
         <button 
           class="ml-2 p-1.5 text-gray-500 hover:text-blue-600 transition-colors" 
           title="Copy to clipboard"
-          on:click={copyLobbyCode}
+          onclick={copyLobbyCode}
         >
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
             <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" />
@@ -138,7 +139,7 @@
         <div class="flex justify-between">
           <button 
             class="px-4 py-2.5 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-            on:click={leaveLobby}
+            onclick={leaveLobby}
           >
             Leave Lobby
           </button>
@@ -146,7 +147,7 @@
           {#if isHost}
             <button 
               class="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 flex items-center"
-              on:click={startGame}
+              onclick={startGame}
             >
               <span>Start Game</span>
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1.5" viewBox="0 0 20 20" fill="currentColor">
