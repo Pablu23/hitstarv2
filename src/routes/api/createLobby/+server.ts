@@ -1,10 +1,10 @@
 import { db } from '$lib/server/db';
-import { lobbysRelations, lobbysTable, usersInLobby, usersTable } from '$lib/server/db/schema';
-import { json } from '@sveltejs/kit';
+import { lobbysTable, usersInLobby } from '$lib/server/db/schema';
+import { json, type RequestHandler } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
 
 
-export async function POST({ request }) {
+export const POST: RequestHandler = async ({ request }) => {
     const userReq = await request.json();
 
     const userInLobby = (await db.$count(usersInLobby, eq(usersInLobby.userEmail, userReq.email))) > 0

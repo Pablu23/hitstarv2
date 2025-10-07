@@ -28,6 +28,8 @@
 	<form method="POST" action="?/deleteUsers">
 		<button type="submit">Delete all Users</button>
 	</form>
+
+  <button type="submit" onclick={async () => await goto("/lobby/create")}>Create Lobby</button>
 {/if}
 <!-- 
 <button

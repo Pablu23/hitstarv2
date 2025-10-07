@@ -39,7 +39,9 @@
 		"vite": "^7.0.4"
 	},
 	"dependencies": {
+		"@tailwindcss/vite": "^4.1.14",
 		"better-sqlite3": "^11.8.0",
-		"drizzle-orm": "^0.40.0"
+		"drizzle-orm": "^0.40.0",
+		"tailwindcss": "^4.1.14"
 	}
 }
