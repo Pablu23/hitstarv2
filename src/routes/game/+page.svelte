@@ -29,11 +29,11 @@
 	let isPlaying = $state(false);
 
 	// Mock player data
-	const players = $state<Player[]>([
+	const players: Player[] = [
 		{ id: 1, name: 'YourName', isHost: true },
 		{ id: 2, name: 'Player2', isHost: false },
 		{ id: 3, name: 'GamerX', isHost: false }
-	]);
+	];
 
 	// Mock cards data
 	const mockCards = [
@@ -183,15 +183,15 @@
 			newCards.splice(dragTargetIndex, 0, currentCard);
 			placedCards = newCards;
 
-			// Remove the current card
-			currentCard = null;
-
 			// Send update to other players via WebSocket
 			ws.sendMessage({
 				type: 'cardPlaced',
 				cardId: currentCard!.id,
 				position: dragTargetIndex
 			});
+
+			// Remove the current card
+			currentCard = null;
 
 			// Reset the card position and style
 			card.style.position = '';
@@ -218,9 +218,9 @@
 
 	onMount(() => {
 		// Set up initial game $state
-		placedCards = [mockCards[0]];
-		cards = mockCards.slice(1);
-		currentCard = mockCards[1];
+		placedCards = [mockCards[0], mockCards[1]];
+		cards = mockCards.slice(2);
+		currentCard = mockCards[3];
 
 		// Set up event listeners for drag and drop
 		window.addEventListener('mousemove', onDrag);
@@ -257,7 +257,7 @@
 				{#if getPlayerInfo().previous}
 					<div class="flex flex-col items-center">
 						<span class="text-xs text-indigo-200">Previous</span>
-						<span class="text-sm font-medium">PREVIOUS PLACE {getPlayerInfo().previous.name}</span>
+						<span class="text-sm font-medium">PREVIOUS NAME</span>
 					</div>
 				{/if}
 
@@ -269,7 +269,7 @@
 				{#if getPlayerInfo().next}
 					<div class="flex flex-col items-center">
 						<span class="text-xs text-indigo-200">Next</span>
-						<span class="text-sm font-medium">{getPlayerInfo().next.name}</span>
+						<span class="text-sm font-medium">NEXT NAME</span>
 					</div>
 				{/if}
 			</div>
@@ -287,7 +287,7 @@
 			<div class="flex items-center space-x-4">
 				<button
 					class="p-2 bg-indigo-600 text-white rounded-full hover:bg-indigo-700"
-					on:click={togglePlayPause}
+					onclick={togglePlayPause}
 				>
 					{#if isPlaying}
 						<!-- Pause icon -->
@@ -336,7 +336,7 @@
 						min="0"
 						max={audioDuration}
 						value={audioProgress}
-						on:input={updateProgress}
+						oninput={updateProgress}
 						class="w-full h-2 rounded-lg appearance-none bg-gray-200 cursor-pointer"
 					/>
 					<div class="flex justify-between text-xs text-gray-500 mt-1">
@@ -353,11 +353,17 @@
 			<div class="relative py-10 mb-12">
 				<div class="overflow-x-auto pb-4">
 					<div class="flex space-x-6 min-w-full px-6">
+						<div
+							class="card-slot relative flex-shrink-0 w-48 h-64 border-2 border-dashed border-gray-200 rounded-lg {dragTargetIndex ===
+							0
+								? 'highlight'
+								: ''}"
+						></div>
 						{#each placedCards as card, index}
 							<!-- Adding card-slot class for drop target detection -->
 							<div
 								class="card-slot relative flex-shrink-0 w-48 h-64 rounded-lg overflow-hidden shadow-md border border-gray-200 transition-all {dragTargetIndex ===
-								index
+								index + 1
 									? 'highlight'
 									: ''}"
 							>
@@ -378,7 +384,7 @@
 						<!-- Add an extra slot at the end -->
 						<div
 							class="card-slot relative flex-shrink-0 w-48 h-64 border-2 border-dashed border-gray-200 rounded-lg {dragTargetIndex ===
-							placedCards.length
+							placedCards.length + 1
 								? 'highlight'
 								: ''}"
 						></div>
@@ -389,13 +395,14 @@
 			<!-- Current card to place - will be draggable -->
 			{#if currentCard}
 				<div class="flex justify-center mb-8">
+					<!-- svelte-ignore a11y_no_static_element_interactions -->
 					<div
 						id="current-card"
 						class="card relative w-48 h-64 rounded-lg overflow-hidden shadow-lg border border-indigo-400 cursor-move {currentPlayerId !==
 						players[0].id
 							? 'pointer-events-none opacity-70'
 							: ''}"
-						on:mousedown={startDrag}
+						onmousedown={startDrag}
 					>
 						<div class="absolute inset-0 flex flex-col p-4 bg-white">
 							<div class="text-center text-gray-600 text-sm mb-1">Artist</div>
@@ -424,7 +431,7 @@
 	</div>
 </div>
 
-<style>
+<style lang="css">
 	/* Prevent text selection during drag */
 	:global(.no-select) {
 		user-select: none;
