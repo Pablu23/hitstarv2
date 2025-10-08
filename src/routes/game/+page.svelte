@@ -348,22 +348,16 @@
 		</div>
 
 		<!-- Game area -->
-		<div class="flex-1 flex flex-col">
+		<div class="flex-1 flex flex-col md:items-center">
 			<!-- Card placement area - using horizontal scrolling for many cards -->
 			<div class="relative py-10 mb-12">
 				<div class="overflow-x-auto pb-4">
 					<div class="flex space-x-6 min-w-full px-6">
-						<div
-							class="card-slot relative flex-shrink-0 w-48 h-64 border-2 border-dashed border-gray-200 rounded-lg {dragTargetIndex ===
-							0
-								? 'highlight'
-								: ''}"
-						></div>
 						{#each placedCards as card, index}
 							<!-- Adding card-slot class for drop target detection -->
 							<div
 								class="card-slot relative flex-shrink-0 w-48 h-64 rounded-lg overflow-hidden shadow-md border border-gray-200 transition-all {dragTargetIndex ===
-								index + 1
+								index
 									? 'highlight'
 									: ''}"
 							>
@@ -384,7 +378,7 @@
 						<!-- Add an extra slot at the end -->
 						<div
 							class="card-slot relative flex-shrink-0 w-48 h-64 border-2 border-dashed border-gray-200 rounded-lg {dragTargetIndex ===
-							placedCards.length + 1
+							placedCards.length
 								? 'highlight'
 								: ''}"
 						></div>
