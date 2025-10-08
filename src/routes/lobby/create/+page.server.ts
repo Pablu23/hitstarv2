@@ -1,9 +1,5 @@
-import { generateRandomString } from "$lib/server/auth/spotify";
-import type { states } from "$lib/server/db/schema";
 import { redirect } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
-import { setContext } from "svelte";
-
 
 export const load: PageServerLoad = async ({locals, fetch}) => {
     const response = await fetch("/api/createLobby", {
