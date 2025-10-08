@@ -1,12 +1,14 @@
 <script lang="ts">
   import { onMount, onDestroy } from 'svelte';
-  import { createWebSocketClient } from '$lib/websocketClient';
+  import { WebsocketClient } from '$lib/websocketClient';
   import type { Settings, GameMode, Playlist } from '$lib/types';
   import PlayerList from '$lib/components/PlayerList.svelte';
   import GameSettings from '$lib/components/GameSettings.svelte';
   
   // Create WebSocket client
-  let wsClient = $state(createWebSocketClient());
+
+  let wsClient = new WebsocketClient();
+  let connected = $state(wsClient.connected);
 
   // Current user state
   let isHost = $state(true); // Assume current user is host for this example
@@ -57,23 +59,25 @@
   // Initialize mock data for demo
   function initializeMockData() {
     // Simulate WebSocket connection and receiving initial player data
-    setTimeout(() => {
-      console.log("Init mock data");
-      wsClient.players = [
-        { id: 1, name: 'YourName', isHost: true },
-        { id: 2, name: 'Player2', isHost: false },
-        { id: 3, name: 'GamerX', isHost: false }
-      ];
-      wsClient.connected = true;
-    }, 500);
+    // setTimeout(() => {
+    //   console.log("Init mock data");
+    //   wsClient.players = [
+    //     { id: 1, name: 'YourName', isHost: true },
+    //     { id: 2, name: 'Player2', isHost: false },
+    //     { id: 3, name: 'GamerX', isHost: false }
+    //   ];
+    //   wsClient.connected = true;
+    // }, 500);
   }
   
   onMount(() => {
     // In a real app, connect to WebSocket server
     // wsClient.connect('ws://example.com/game-lobby');
 
+    wsClient.connect('ws://localhost:3000/ws?lobby_id=test');
+
     // For demo purposes, we'll simulate a connection
-    initializeMockData();
+    // initializeMockData();
   });
   
   onDestroy(() => {
@@ -107,7 +111,7 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
       <!-- Left column: Player list -->
       <div class="md:col-span-1">
-        {#if wsClient.connected}
+        {#if connected}
           <PlayerList 
             players={wsClient.players} 
             maxPlayers={wsClient.gameSettings.maxPlayers} 
