@@ -1,13 +1,13 @@
 import type { Player, Settings, WebSocketMessage } from './types';
 
 export class WebsocketClient {
-  connected = false;
-  players: Player[] = [];
-  gameSettings: Settings = {
+  connected = $state(false);
+  players: Player[] = $state([]);
+  gameSettings: Settings = $state({
     maxPlayers: 8,
     gameMode: 'classic',
     selectedPlaylistId: 1
-  };
+  });
   socket: WebSocket | null = null;
 
   connect(url: string): void {
@@ -74,6 +74,9 @@ export class WebsocketClient {
     this.players = [];
   }
 }
+
+export const wsClient = new WebsocketClient();
+
 //
 // export function createWebSocketClient() {
 //   let socket: WebSocket | null = null;

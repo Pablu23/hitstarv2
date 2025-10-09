@@ -22,14 +22,14 @@
 		selectedPlaylistId: settings.selectedPlaylistId
 	});
 
-	$effect(() => {
-		// Update local settings when change
-		localSettings = {
-			maxPlayers: settings.maxPlayers,
-			gameMode: settings.gameMode,
-			selectedPlaylistId: settings.selectedPlaylistId
-		};
-	});
+	// $effect(() => {
+	// 	// Update local settings when change
+	// 	localSettings = {
+	// 		maxPlayers: settings.maxPlayers,
+	// 		gameMode: settings.gameMode,
+	// 		selectedPlaylistId: settings.selectedPlaylistId
+	// 	};
+	// });
 
 	function updateMaxPlayers(value: number) {
 		if (value >= 2 && value <= 16) {
