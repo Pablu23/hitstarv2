@@ -1,8 +1,9 @@
+import type { User } from '../app';
 import type { Player, Settings, WebSocketMessage } from './types';
 
 export class WebsocketClient {
   connected = $state(false);
-  players: Player[] = $state([]);
+  players: User[] = $state([]);
   gameSettings: Settings = $state({
     maxPlayers: 8,
     gameMode: 'classic',
@@ -40,7 +41,7 @@ export class WebsocketClient {
             break;
 
           case 'playerLeave':
-            this.players = this.players.filter((p) => p.id !== message.playerId);
+            this.players = this.players.filter((p) => p.email !== message.email);
             break;
 
           case 'playerList':

@@ -5,11 +5,7 @@ declare global {
   namespace App {
     // interface Error {}
     interface Locals {
-      // user: {
-      // 	isLoggedIn: boolean;
-      // 	email: string | null;
-      // 	username: string | null;
-      // }
+      user: User | null;
     }
     // interface PageData {}
     // interface PageState {}
@@ -18,15 +14,15 @@ declare global {
 }
 
 export interface User {
-  email: string | null;
-  username: string | null;
+  email: string;
+  username: string;
 }
-
-export interface Player {
-  id: number;
-  name: string;
-  isHost: boolean;
-}
+//
+// export interface Player {
+//   id: number;
+//   name: string;
+//   isHost: boolean;
+// }
 
 export interface GameMode {
   id: string;

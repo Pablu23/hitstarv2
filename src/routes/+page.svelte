@@ -14,7 +14,7 @@
 		isLoggingIn = true;
 		loginError = '';
 
-		goto('/login');
+		goto('api/auth/login');
 	}
 
 	function handleLogout() {
@@ -23,8 +23,18 @@
 		goto('/logout');
 	}
 
-	function createLobby() {
-		goto('/lobby/create');
+	async function createLobby() {
+		const res = await fetch('/api/lobby/create', {
+			method: 'POST'
+		});
+
+		if (res.status === 200) {
+      const lobby = await res.json()
+      lobbyCode = lobby.id
+			goto(`/lobby/${lobbyCode}`);
+		} else {
+			console.log(await res.text());
+		}
 	}
 
 	function joinLobby() {
@@ -113,7 +123,7 @@
 
 					<button
 						class="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-md transition-colors flex items-center justify-center"
-						onclick={createLobby}
+						onclick={async () => await createLobby()}
 					>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"

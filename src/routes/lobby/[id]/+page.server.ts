@@ -1,29 +1,39 @@
-import { db } from "$lib/server/db";
-import { eq } from "drizzle-orm";
-import type { PageServerLoad } from "./$types";
-import { lobbysTable } from "$lib/server/db/schema";
-import { redirect } from "@sveltejs/kit";
+import { redirect } from '@sveltejs/kit';
+import type { PageServerLoad } from './$types';
+import type { User } from '../../../app';
+import type { Settings } from '$lib/types';
 
-export const load: PageServerLoad = async ({ params, locals }) => {
-    const id = Number(params.id);
+export const load: PageServerLoad = async ({ params, fetch, locals: { user } }) => {
+  if (!user) {
+    redirect(307, '/');
+  }
 
-    const lobby = await db.query.lobbysTable.findFirst({
-        with: {
-            usersInLobby: {
-                with: {
-                    user: true
-                }
-            }
-        },
-        where: eq(lobbysTable.id, id)
-    })
-
-    if (!lobby) {
-        redirect(307, "/error");
+  const response = await fetch(`http://hitstar.xyz/api/lobby/${params.id}`, {
+    headers: {
+      'Content-Type': 'application/json'
     }
+  });
 
-    return {
-        lobby: lobby,
-        username: locals.user.username
+  if (response.status != 200) {
+    redirect(307, '/');
+  }
+
+  const {
+    id,
+    host,
+    players,
+    gameSettings
+  }: { id: string; host: User; players: User[]; gameSettings: Settings } = await response.json();
+  console.log('Successful request for lobby');
+  console.log(id);
+
+  return {
+    user: user,
+    lobby: {
+      id,
+      host,
+      players,
+      gameSettings
     }
+  };
 };

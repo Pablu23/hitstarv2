@@ -1,7 +1,7 @@
 <script lang="ts">
-  import type { Player } from '$lib/types';
-  
-  let {players = [], maxPlayers = 8 }: { players: Player[], maxPlayers: number} = $props();
+	import type { User } from "../../app";
+
+  let {players = [], maxPlayers = 8, host }: { players: User[], maxPlayers: number, host: User} = $props();
 </script>
 
 <div class="bg-white rounded-lg shadow-sm p-5 border border-gray-100">
@@ -11,14 +11,14 @@
   </div>
   
   <ul class="space-y-2">
-    {#each players as player (player.id)}
-      <li class="flex items-center p-2 rounded-md {player.isHost ? 'bg-blue-50' : 'bg-gray-50'}">
+    {#each players as player (player.email)}
+      <li class="flex items-center p-2 rounded-md {player.email === host.email ? 'bg-blue-50' : 'bg-gray-50'}">
         <div class="bg-gradient-to-br from-blue-500 to-indigo-600 h-8 w-8 rounded-full flex items-center justify-center text-white font-medium text-sm">
-          {player.name.substring(0, 2).toUpperCase()}
+          {player.username.substring(0, 2).toUpperCase()}
         </div>
-        <span class="ml-2 text-gray-800 font-medium">{player.name}</span>
+        <span class="ml-2 text-gray-800 font-medium">{player.username}</span>
         
-        {#if player.isHost}
+        {#if player.email === host.email}
           <span class="ml-auto flex items-center text-blue-600 text-sm font-medium">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
               <path d="M9.504 5.071a.5.5 0 01.992 0l1.5 10a.5.5 0 01-.992 0l-1.5-10zM8 9a1 1 0 100 2h4a1 1 0 100-2H8z" />
