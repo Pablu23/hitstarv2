@@ -7,8 +7,7 @@
 	let loginError = $state('');
 
 	let { data }: PageProps = $props();
-  let user = $state(data.user);
-
+	let user = $state(data.user);
 
 	// Example login function (would connect to a real auth service)
 	function handleLogin() {
@@ -19,11 +18,9 @@
 	}
 
 	function handleLogout() {
-		user.isLoggedIn = false;
-    user.username = null;
-    user.email = null;
+		user = null;
 
-	  goto("/logout");
+		goto('/logout');
 	}
 
 	function createLobby() {
@@ -43,7 +40,7 @@
 		<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
 			<h1 class="text-2xl font-bold text-indigo-600">Hitstar</h1>
 
-			{#if user.isLoggedIn}
+			{#if user}
 				<div class="flex items-center">
 					<span class="mr-4 text-gray-700">Welcome, {user.username}</span>
 					<button
@@ -66,7 +63,7 @@
 				<p class="text-xl text-gray-600">Place songs on a timeline in the correct order.</p>
 			</div>
 
-			{#if !user.isLoggedIn}
+			{#if !user}
 				<!-- Login Section -->
 				<div class="bg-white rounded-lg shadow-md p-8 mb-6">
 					<h3 class="text-xl font-semibold text-gray-800 mb-6">Sign In to Play</h3>

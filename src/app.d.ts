@@ -1,21 +1,25 @@
 // See https://svelte.dev/docs/kit/types#app.d.ts
 
-
 // for information about these interfaces
 declare global {
-	namespace App {
-		// interface Error {}
-		interface Locals {
-			user: {
-				isLoggedIn: boolean;
-				email: string | null;
-				username: string | null;
-			}
-		}
-		// interface PageData {}
-		// interface PageState {}
-		// interface Platform {}
-	}
+  namespace App {
+    // interface Error {}
+    interface Locals {
+      // user: {
+      // 	isLoggedIn: boolean;
+      // 	email: string | null;
+      // 	username: string | null;
+      // }
+    }
+    // interface PageData {}
+    // interface PageState {}
+    // interface Platform {}
+  }
+}
+
+export interface User {
+  email: string | null;
+  username: string | null;
 }
 
 export interface Player {
@@ -45,4 +49,4 @@ export interface GameSettings {
 export type WebSocketMessage = {
   type: string;
   [key: string]: any;
-}
+};
