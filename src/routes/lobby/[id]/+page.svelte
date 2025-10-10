@@ -81,6 +81,10 @@
 	}
 
 	function leaveLobby() {
+    wsClient.sendMessage({
+      type: 'leaveGame',
+      player: data.user.email
+    })
 		wsClient.disconnect();
 		// In a real app, you'd likely redirect to another page here
 	}
@@ -98,7 +102,7 @@
 
 	onDestroy(() => {
 		// Clean up WebSocket connection when component is destroyed
-		wsClient.disconnect();
+    leaveLobby()
 	});
 </script>
 
