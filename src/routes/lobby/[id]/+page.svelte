@@ -5,6 +5,8 @@
 	import PlayerList from '$lib/components/PlayerList.svelte';
 	import GameSettings from '$lib/components/GameSettings.svelte';
 	import type { PageProps } from './$types';
+	import { env } from '$env/dynamic/public';
+	import { goto } from '$app/navigation';
 
 	// Create WebSocket client
 
@@ -12,7 +14,7 @@
 
 	let { data }: PageProps = $props();
 
-  let lobbyCode = $state(data.lobby.id);
+	let lobbyCode = $state(data.lobby.id);
 	let isHost = $state(data.user.email === data.lobby.host.email); // Assume current user is host for this example
 
 	// Available options for settings
@@ -84,8 +86,14 @@
 	}
 
 	onMount(() => {
-		wsClient.connect(`ws://hitstar.xyz/api/lobby?id=${lobbyCode}`);
-    wsClient.gameSettings = data.lobby.gameSettings
+		if (!env.PUBLIC_API_WS_BASE) {
+			goto('/error');
+			return;
+		}
+
+		const u = new URL(`lobby?id=${lobbyCode}`, env.PUBLIC_API_WS_BASE);
+		wsClient.connect(u.href);
+		wsClient.gameSettings = data.lobby.gameSettings;
 	});
 
 	onDestroy(() => {
@@ -130,7 +138,11 @@
 			<!-- Left column: Player list -->
 			<div class="md:col-span-1">
 				{#if wsClient.connected}
-					<PlayerList players={wsClient.players} maxPlayers={wsClient.gameSettings.maxPlayers} host={data.lobby.host} />
+					<PlayerList
+						players={wsClient.players}
+						maxPlayers={wsClient.gameSettings.maxPlayers}
+						host={data.lobby.host}
+					/>
 				{:else}
 					<div class="bg-white rounded-lg shadow-sm p-5 flex items-center justify-center">
 						<div class="flex items-center text-amber-600">

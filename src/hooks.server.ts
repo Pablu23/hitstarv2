@@ -1,11 +1,20 @@
-import { type Handle, type HandleFetch } from '@sveltejs/kit';
+import { type Handle } from '@sveltejs/kit';
+import { env } from '$env/dynamic/public';
 
 export const handle: Handle = async ({ event, resolve }) => {
 	const sessionId = event.cookies.get('session_id');
 	event.locals.user = null;
 
 	if (sessionId) {
-		const request = new Request('http://hitstar.xyz/api/user/me');
+		if (!env.PUBLIC_API_BASE) throw new Error('PUBLIC_API_BASE is not set');
+
+		console.log(env.PUBLIC_API_BASE);
+
+		const u = new URL('user/me', env.PUBLIC_API_BASE);
+
+		console.log(u);
+
+		const request = new Request(u);
 		request.headers.set(
 			'cookie',
 			event.cookies
