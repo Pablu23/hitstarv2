@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
-	import { createWebSocketClient } from '$lib/websocketClient';
-	import type { Player } from '$lib/types';
+	import { wsClient } from '$lib/websocketClient.svelte';
+	import type { User } from '../../app';
 
 	// Game types
 	interface SongCard {
@@ -11,11 +11,8 @@
 		year: number;
 	}
 
-	// WebSocket connection
-	let ws = $state(createWebSocketClient());
-
 	// Game $state
-	let currentPlayerId = $state<number>(1);
+	let currentPlayerId = $state<string>('test1');
 	let cards = $state<SongCard[]>([]);
 	let placedCards = $state<SongCard[]>([]);
 	let currentCard = $state<SongCard | null>(null);
@@ -29,10 +26,10 @@
 	let isPlaying = $state(false);
 
 	// Mock player data
-	const players: Player[] = [
-		{ id: 1, name: 'YourName', isHost: true },
-		{ id: 2, name: 'Player2', isHost: false },
-		{ id: 3, name: 'GamerX', isHost: false }
+	const players: User[] = [
+		{ email: 'test1', username: 'YourName' },
+		{ email: 'test2', username: 'Player2' },
+		{ email: 'test3', username: 'GamerX' }
 	];
 
 	// Mock cards data
@@ -45,7 +42,7 @@
 
 	// Set up player information
 	function getPlayerInfo() {
-		const playerIndex = players.findIndex((p) => p.id === currentPlayerId);
+		const playerIndex = players.findIndex((p) => p.email === currentPlayerId);
 		const info = {
 			previous: playerIndex > 0 ? players[playerIndex - 1] : null,
 			current: players[playerIndex],
@@ -104,7 +101,7 @@
 	// Card dragging functionality
 	function startDrag(event: MouseEvent) {
 		// Only allow dragging for the current player
-		if (currentPlayerId !== players[0].id) return;
+		if (currentPlayerId !== players[0].email) return;
 
 		const card = document.getElementById('current-card');
 		if (!card) return;
@@ -184,7 +181,7 @@
 			placedCards = newCards;
 
 			// Send update to other players via WebSocket
-			ws.sendMessage({
+			wsClient.sendMessage({
 				type: 'cardPlaced',
 				cardId: currentCard!.id,
 				position: dragTargetIndex
@@ -245,7 +242,7 @@
 		// stopProgressTimer();
 
 		// Clean up WebSocket connection
-		ws.disconnect();
+		wsClient.disconnect();
 	});
 </script>
 
@@ -263,7 +260,7 @@
 
 				<div class="flex flex-col items-center bg-indigo-600 px-4 py-1 rounded-lg">
 					<span class="text-xs text-indigo-200">Current</span>
-					<span class="text-lg font-semibold">{getPlayerInfo().current?.name}</span>
+					<span class="text-lg font-semibold">{getPlayerInfo().current?.username}</span>
 				</div>
 
 				{#if getPlayerInfo().next}
@@ -393,7 +390,7 @@
 					<div
 						id="current-card"
 						class="card relative w-48 h-64 rounded-lg overflow-hidden shadow-lg border border-indigo-400 cursor-move {currentPlayerId !==
-						players[0].id
+						players[0].email
 							? 'pointer-events-none opacity-70'
 							: ''}"
 						onmousedown={startDrag}
