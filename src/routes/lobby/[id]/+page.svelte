@@ -86,6 +86,7 @@
       player: data.user.email
     })
 		wsClient.disconnect();
+    goto("/");
 		// In a real app, you'd likely redirect to another page here
 	}
 
