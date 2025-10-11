@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
 	import { wsClient } from '$lib/websocketClient.svelte';
-	import type { Settings, GameMode, Playlist } from '$lib/types';
+	import type { Settings, GameMode } from '$lib/types';
 	import PlayerList from '$lib/components/PlayerList.svelte';
 	import GameSettings from '$lib/components/GameSettings.svelte';
 	import type { PageProps } from './$types';
@@ -24,40 +24,7 @@
 		{ id: 'speed', name: 'Speed Round' }
 	]);
 
-	let playlists = $state<Playlist[]>([
-		{
-			id: 1,
-			name: 'Pop Hits 2023',
-			imageUrl: 'https://example.com/images/pop2023.jpg',
-			songCount: 25
-		},
-		{
-			id: 2,
-			name: 'Rock Classics',
-			imageUrl: 'https://example.com/images/rock.jpg',
-			songCount: 30
-		},
-		{ id: 3, name: '80s Mixtape', imageUrl: 'https://example.com/images/80s.jpg', songCount: 20 },
-		{
-			id: 4,
-			name: 'Movie Soundtracks',
-			imageUrl: 'https://example.com/images/movies.jpg',
-			songCount: 15
-		},
-		{
-			id: 5,
-			name: 'Hip Hop Essentials',
-			imageUrl: 'https://example.com/images/hiphop.jpg',
-			songCount: 40
-		},
-		{
-			id: 6,
-			name: 'Indie Discoveries',
-			imageUrl: 'https://example.com/images/indie.jpg',
-			songCount: 35
-		}
-	]);
-
+	let playlists = $state(data.playlists);
 	function handleSettingsUpdate(settings: Settings) {
 		// Send updated settings to other players via websocket
 		wsClient.gameSettings = settings;
@@ -81,12 +48,12 @@
 	}
 
 	function leaveLobby() {
-    wsClient.sendMessage({
-      type: 'leaveGame',
-      player: data.user.email
-    })
+		wsClient.sendMessage({
+			type: 'leaveGame',
+			player: data.user.email
+		});
 		wsClient.disconnect();
-    goto("/");
+		goto('/');
 		// In a real app, you'd likely redirect to another page here
 	}
 
@@ -103,7 +70,7 @@
 
 	onDestroy(() => {
 		// Clean up WebSocket connection when component is destroyed
-    leaveLobby()
+		leaveLobby();
 	});
 </script>
 

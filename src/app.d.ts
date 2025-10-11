@@ -30,7 +30,7 @@ export interface GameMode {
 }
 
 export interface Playlist {
-  id: number;
+  id: string;
   name: string;
   imageUrl: string;
   songCount: number;
