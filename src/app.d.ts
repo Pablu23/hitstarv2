@@ -17,12 +17,6 @@ export interface User {
   email: string;
   username: string;
 }
-//
-// export interface Player {
-//   id: number;
-//   name: string;
-//   isHost: boolean;
-// }
 
 export interface GameMode {
   id: string;
@@ -36,10 +30,10 @@ export interface Playlist {
   songCount: number;
 }
 
-export interface GameSettings {
+export interface Settings {
   maxPlayers: number;
   gameMode: string;
-  selectedPlaylist: number;
+  selectedPlaylistId: string;
 }
 
 export type WebSocketMessage = {

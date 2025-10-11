@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
 	import { wsClient } from '$lib/websocketClient.svelte';
-	import type { Settings, GameMode } from '$lib/types';
 	import PlayerList from '$lib/components/PlayerList.svelte';
 	import GameSettings from '$lib/components/GameSettings.svelte';
 	import type { PageProps } from './$types';
 	import { env } from '$env/dynamic/public';
 	import { goto } from '$app/navigation';
+	import type { GameMode, Settings } from '../../../app';
 
 	// Create WebSocket client
 

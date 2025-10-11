@@ -1,10 +1,10 @@
 <script lang="ts">
-  import type { Playlist } from '$lib/types';
+  import type { Playlist } from '../../app';
   
   const props = $props<{
     playlists: Playlist[];
-    selectedPlaylistId: number;
-    onSelect: (id: number) => void;
+    selectedPlaylistId: string;
+    onSelect: (id: string) => void;
   }>();
   
   let searchQuery = $state('');

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { GameMode, Playlist, Settings } from '$lib/types';
+	import type { GameMode, Playlist, Settings } from '../../app';
 	import PlaylistSelector from './PlaylistSelector.svelte';
 
 	let {
@@ -34,7 +34,7 @@
 		onUpdate(localSettings);
 	}
 
-	function updatePlaylist(playlistId: number) {
+	function updatePlaylist(playlistId: string) {
 		localSettings.selectedPlaylistId = playlistId;
 		onUpdate(localSettings);
 	}
