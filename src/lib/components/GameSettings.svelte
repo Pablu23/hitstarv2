@@ -16,7 +16,7 @@
 		onUpdate: (settings: Settings) => void;
 	} = $props();
 
-	let localSettings = $state<Settings>({
+	let localSettings = $derived<Settings>({
 		maxPlayers: settings.maxPlayers,
 		gameMode: settings.gameMode,
 		selectedPlaylistId: settings.selectedPlaylistId
