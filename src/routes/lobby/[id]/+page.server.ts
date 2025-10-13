@@ -1,7 +1,6 @@
 import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import type { User } from '../../../app';
-import type { Playlist, Settings } from '$lib/types';
+import type { User, Playlist, Settings } from '../../../app';
 import { env } from '$env/dynamic/public';
 
 export const load: PageServerLoad = async ({ params, fetch, locals: { user } }) => {

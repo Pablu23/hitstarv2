@@ -14,6 +14,11 @@
 
 	let { data }: PageProps = $props();
 
+	wsClient.onGameStart = () => {
+		console.log('Game starting');
+		goto('/game');
+	};
+
 	let lobbyCode = $state(data.lobby.id);
 	let isHost = $state(data.user.email === data.lobby.host.email); // Assume current user is host for this example
 
@@ -39,7 +44,7 @@
 			type: 'startGame',
 			settings: wsClient.gameSettings
 		});
-		// In a real app, this would navigate to the game screen
+		// goto('/game');
 	}
 
 	function copyLobbyCode() {
@@ -49,12 +54,10 @@
 
 	function leaveLobby() {
 		wsClient.sendMessage({
-			type: 'leaveGame',
-			player: data.user.email
+			type: 'leaveGame'
 		});
 		wsClient.disconnect();
 		goto('/');
-		// In a real app, you'd likely redirect to another page here
 	}
 
 	onMount(() => {
@@ -70,7 +73,6 @@
 
 	onDestroy(() => {
 		// Clean up WebSocket connection when component is destroyed
-		leaveLobby();
 	});
 </script>
 

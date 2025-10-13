@@ -13,7 +13,6 @@
 
 	// Game $state
 	let currentPlayerId = $state<string>('test1');
-	let cards = $state<SongCard[]>([]);
 	let placedCards = $state<SongCard[]>([]);
 	let currentCard = $state<SongCard | null>(null);
 	let dragPosition = $state<{ x: number; y: number } | null>(null);
@@ -216,7 +215,6 @@
 	onMount(() => {
 		// Set up initial game $state
 		placedCards = [mockCards[0], mockCards[1]];
-		cards = mockCards.slice(2);
 		currentCard = mockCards[3];
 
 		// Set up event listeners for drag and drop

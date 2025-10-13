@@ -9,6 +9,7 @@ export class WebsocketClient {
     selectedPlaylistId: ''
   });
   socket: WebSocket | null = null;
+  onGameStart: () => void = () => {};
 
   connect(url: string): void {
     if (this.socket) this.socket.close();
@@ -49,6 +50,10 @@ export class WebsocketClient {
 
           case 'settingsUpdate':
             this.gameSettings = message.settings;
+            break;
+
+          case 'startGame':
+            this.onGameStart()
             break;
         }
       } catch (error) {
