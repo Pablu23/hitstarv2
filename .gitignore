@@ -1,5 +1,8 @@
 node_modules
 
+# Yes, frontend is AI slop
+AGENTS.md
+
 # Output
 .output
 .vercel

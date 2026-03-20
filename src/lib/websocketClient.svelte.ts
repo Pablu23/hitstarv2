@@ -10,6 +10,7 @@ export class WebsocketClient {
   });
   socket: WebSocket | null = null;
   onGameStart: () => void = () => {};
+  customMessageHandlers: ((message: WebSocketMessage) => void)[] = [];
 
   connect(url: string): void {
     if (this.socket) this.socket.close();
@@ -35,6 +36,7 @@ export class WebsocketClient {
 
         console.log(`Received message ${JSON.stringify(message)}`);
 
+        // First, handle built-in message types
         switch (message.type) {
           case 'playerJoin':
             this.players = [...this.players, message.player];
@@ -56,6 +58,9 @@ export class WebsocketClient {
             this.onGameStart()
             break;
         }
+
+        // Then, call all custom message handlers for additional handling
+        this.customMessageHandlers.forEach(handler => handler(message));
       } catch (error) {
         console.error('Failed to parse WebSocket message:', error);
       }
@@ -77,6 +82,14 @@ export class WebsocketClient {
     }
     this.connected = false;
     this.players = [];
+  }
+
+  addMessageHandler(handler: (message: WebSocketMessage) => void): void {
+    this.customMessageHandlers.push(handler);
+  }
+
+  removeMessageHandler(handler: (message: WebSocketMessage) => void): void {
+    this.customMessageHandlers = this.customMessageHandlers.filter(h => h !== handler);
   }
 }
 

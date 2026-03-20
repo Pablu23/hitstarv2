@@ -2,6 +2,7 @@
 	import { onMount, onDestroy } from 'svelte';
 	import { wsClient } from '$lib/websocketClient.svelte';
 	import type { User } from '../../app';
+	import { browser } from '$app/environment';
 
 	// Game types
 	interface SongCard {
@@ -9,6 +10,22 @@
 		artist: string;
 		title: string;
 		year: number;
+	}
+
+	interface CardDragMessage {
+		type: 'cardDrag';
+		playerId: string;
+		cardId: number;
+		x: number;
+		y: number;
+		targetIndex: number;
+	}
+
+	interface CardPlaceMessage {
+		type: 'cardPlace';
+		playerId: string;
+		cardId: number;
+		index: number;
 	}
 
 	// Game $state
@@ -38,6 +55,85 @@
 		{ id: 3, artist: 'The Beatles', title: 'Hey Jude', year: 1968 },
 		{ id: 4, artist: 'Madonna', title: 'Like a Prayer', year: 1989 }
 	];
+
+	// WebSocket message handler for card movements
+	function handleWebSocketMessage(message: any) {
+		console.log('[Game Page] Received WebSocket message:', message);
+
+		switch (message.type) {
+			case 'cardDrag':
+				// Only sync if it's not the current player's own drag
+				if (message.playerId !== currentPlayerId) {
+					console.log('[Game Page] Handling remote card drag from player:', message.playerId);
+					handleRemoteCardDrag(message);
+				}
+				break;
+
+			case 'cardPlace':
+				// Sync card placement from other players
+				if (message.playerId !== currentPlayerId) {
+					console.log('[Game Page] Handling remote card placement from player:', message.playerId);
+					handleRemoteCardPlace(message);
+				}
+				break;
+		}
+	}
+
+	// Handle remote player's card drag
+	function handleRemoteCardDrag(message: CardDragMessage) {
+		// Update drag target index for visual feedback
+		dragTargetIndex = message.targetIndex;
+
+		const card = document.getElementById('current-card');
+		if (!card) return;
+
+		if (!dragPosition) {
+			const rect = card.getBoundingClientRect();
+			dragPosition = {
+				x: message.x - rect.left,
+				y: message.y - rect.top
+			};
+		}
+
+		const x = message.x - dragPosition.x;
+		const y = message.y - dragPosition.y;
+
+		card.style.position = 'fixed';
+		card.style.left = `${x}px`;
+		card.style.top = `${y}px`;
+		card.style.zIndex = '1000';
+		card.style.transform = 'none';
+
+		// If we want to show the remote player's card position in real-time
+		// we could also update a visual indicator here
+	}
+
+	// Handle remote player's card placement
+	function handleRemoteCardPlace(message: CardPlaceMessage) {
+		console.log('[Game Page] Processing card placement:', message);
+
+		// Find the card in mockCards by ID
+		const card = mockCards.find((c) => c.id === message.cardId);
+		if (!card) {
+			console.warn('[Game Page] Card not found with id:', message.cardId);
+			return;
+		}
+
+		console.log('[Game Page] Found card:', card);
+		console.log('[Game Page] Current placedCards before update:', placedCards);
+
+		// Insert the card at the specified index
+		placedCards.splice(message.index, 0, card);
+		placedCards = [...placedCards];
+
+		console.log('[Game Page] Updated placedCards:', placedCards);
+
+		// Clear current card if it matches
+		if (currentCard?.id === message.cardId) {
+			currentCard = null;
+			console.log('[Game Page] Cleared current card');
+		}
+	}
 
 	// Set up player information
 	function getPlayerInfo() {
@@ -161,6 +257,19 @@
 		} else {
 			dragTargetIndex = -1;
 		}
+
+		// Send WebSocket message with drag position
+		if (currentCard) {
+			console.log('Sending message');
+			wsClient.sendMessage({
+				type: 'cardDrag',
+				playerId: currentPlayerId,
+				cardId: currentCard.id,
+				x: event.clientX,
+				y: event.clientY,
+				targetIndex: dragTargetIndex
+			});
+		}
 	}
 
 	function stopDrag() {
@@ -181,9 +290,10 @@
 
 			// Send update to other players via WebSocket
 			wsClient.sendMessage({
-				type: 'cardPlaced',
-				cardId: currentCard!.id,
-				position: dragTargetIndex
+				type: 'cardPlace',
+				playerId: currentPlayerId,
+				cardId: currentCard.id,
+				index: dragTargetIndex
 			});
 
 			// Remove the current card
@@ -221,6 +331,9 @@
 		window.addEventListener('mousemove', onDrag);
 		window.addEventListener('mouseup', stopDrag);
 
+		// Set up WebSocket message listener for card synchronization
+		wsClient.addMessageHandler(handleWebSocketMessage);
+
 		// Connect to WebSocket in a real app
 		// ws.connect('ws://example.com/game');
 
@@ -233,14 +346,19 @@
 
 	onDestroy(() => {
 		// Clean up event listeners
-		// window.removeEventListener('mousemove', onDrag);
-		// window.removeEventListener('mouseup', stopDrag);
+		if (browser) {
+			window.removeEventListener('mousemove', onDrag);
+			window.removeEventListener('mouseup', stopDrag);
 
-		// Stop the progress timer
-		// stopProgressTimer();
+			// Remove WebSocket message listener
+			wsClient.removeMessageHandler(handleWebSocketMessage);
 
-		// Clean up WebSocket connection
-		wsClient.disconnect();
+			// Stop the progress timer
+			stopProgressTimer();
+
+			// Clean up WebSocket connection
+			wsClient.disconnect();
+		}
 	});
 </script>
 
@@ -348,7 +466,7 @@
 			<div class="relative py-10 mb-12">
 				<div class="overflow-x-auto pb-4">
 					<div class="flex space-x-6 min-w-full px-6">
-						{#each placedCards as card, index}
+						{#each placedCards as card, index (card.id)}
 							<!-- Adding card-slot class for drop target detection -->
 							<div
 								class="card-slot relative flex-shrink-0 w-48 h-64 rounded-lg overflow-hidden shadow-md border border-gray-200 transition-all {dragTargetIndex ===
